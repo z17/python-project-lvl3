@@ -4,6 +4,12 @@ import re
 from urllib.parse import urlparse
 
 
+def get_site_url(url: string) -> string:
+    parsed_url = urlparse(url)
+
+    return '{url.scheme}://{url.netloc}'.format(url=parsed_url)
+
+
 def convert_name(url: string) -> string:
     name, parsed_url = convert_base(url)
 
@@ -26,6 +32,9 @@ def convert_base(url: string):
     query = parsed_url.query
     if query:
         query = '-' + query
+
+    if path == '/':
+        path = ''
 
     name = parsed_url.netloc + path + query
     name = re.sub(r'\W', '-', name)
