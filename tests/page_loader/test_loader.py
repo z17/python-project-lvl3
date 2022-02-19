@@ -1,13 +1,10 @@
 import tempfile
-
-import pytest
-import requests_mock
-
-from page_loader.download import download_image
-from page_loader import download
 from pathlib import Path
 
-from tests.file_loader import read_fixtures_file, read_file, read_binary_file
+import requests_mock
+
+from page_loader import download
+from tests.file_loader import read_fixtures_file, read_file
 
 
 def test_download():
@@ -26,23 +23,27 @@ def test_download():
             assert actual_content == expected_content
 
 
-@pytest.mark.parametrize(
-    ('url', 'expected_path'),
-    [
-        ('https://test.ru/assets/professions/nodejs.png', 'test-ru-assets-professions-nodejs.png'),
-        ('http://test.ru/assets/professions/some_image.png', 'test-ru-assets-professions-some_image.png')
-    ],
-)
-def test_download_image(url, expected_path):
-    expected_image_content = b'1'
+def test_download_page_with_multiple_sources():
+    with requests_mock.Mocker() as m:
+        content_mock = read_fixtures_file('multiple_resources.txt')
+        url = 'https://ru.hexlet.io/courses'
+        m.get(requests_mock.ANY, text='')
+        m.get(url, text=content_mock)
+        resources = [
+            'ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css',
+            'ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png',
+            'ru-hexlet-io-courses_files/ru-hexlet-io-packs-js-runtime.js',
+        ]
 
-    with requests_mock.Mocker() as r_mock:
-        r_mock.get(requests_mock.ANY, content=b'1')
         with tempfile.TemporaryDirectory() as out_dict:
-            actual_path = download_image(url, Path(out_dict))
-            image_downloaded_path = Path(out_dict).joinpath(expected_path)
-            actual_image = read_binary_file(image_downloaded_path.absolute())
+            expected_path = str(Path(out_dict).joinpath('ru-hexlet-io-courses.html').absolute())
+
+            actual_path = download(url, out_dict)
+            actual_content = read_file(actual_path)
 
             assert actual_path == expected_path
-            assert image_downloaded_path.exists()
-            assert expected_image_content == actual_image
+            for resource in resources:
+                assert (resource in actual_content)
+                assert Path(out_dict).joinpath(resource).exists()
+
+

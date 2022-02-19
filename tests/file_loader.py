@@ -8,7 +8,7 @@ def read_fixtures_file(name: string) -> string:
                .joinpath('fixtures')
                .joinpath(name)
                .absolute())
-    with open(file, 'r') as file:
+    with open(file, 'r', encoding='utf-8') as file:
         return file.read()
 
 
