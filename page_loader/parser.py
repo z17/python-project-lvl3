@@ -4,8 +4,8 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
-from loader import load_url_content
-from name_converter import convert_resource_name
+from page_loader.loader import load_url_content
+from page_loader.name_converter import convert_resource_name
 
 TAGS_LINK_ATTRIBUTES = {
     'img': 'src',
