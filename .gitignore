@@ -4,3 +4,5 @@ __pycache__
 dist
 tests/out/
 tmp/
+
+.DS_Store

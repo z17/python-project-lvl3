@@ -2,7 +2,7 @@ import logging
 
 import pytest
 
-from logger import set_logger_level
+from page_loader.logger import set_logger_level
 
 
 @pytest.fixture(scope="session", autouse=True)
