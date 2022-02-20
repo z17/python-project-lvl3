@@ -22,5 +22,3 @@ def download(page_url: string, destination: string) -> string:
         file.write(content)
 
     return str(file_path)
-
-

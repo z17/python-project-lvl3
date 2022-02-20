@@ -45,5 +45,3 @@ def test_download_page_with_multiple_sources():
             for resource in resources:
                 assert (resource in actual_content)
                 assert Path(out_dict).joinpath(resource).exists()
-
-
