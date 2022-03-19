@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from page_loader.download import download
 
@@ -10,7 +11,11 @@ def main():
     parser.add_argument('destination')
 
     args = parser.parse_args()
-    print(download(args.url, args.destination))
+    try:
+        print(download(args.url, args.destination))
+    except RuntimeError:
+        print("ERROR, see logs")
+        sys.exit(1)  # todo: google for error codes
 
 
 if __name__ == '__main__':

@@ -1,24 +1,25 @@
 import string
 from pathlib import Path
 
+from page_loader.file_paths import get_page_download_path
+from page_loader.file_saver import save_page
 from page_loader.loader import load_url
-from page_loader.name_converter import convert_name, get_site_url
-from page_loader.parser import replace_resources
+from page_loader.logger import get_logger
+from page_loader.parser import process_resources
+
+logger = get_logger(__name__)
 
 
 def download(page_url: string, destination: string) -> string:
-    site_url = get_site_url(page_url)
-    name = convert_name(page_url)
+    if not Path(destination).exists():
+        logger.error("destination folder %s doesn't exists", destination)
+        raise RuntimeError("destination folder doesn't exists")
+
     content = load_url(page_url)
 
-    file_path = Path(destination).joinpath(name + '.html')
-    resources_path = Path(destination).joinpath(name + '_files')
-    if not resources_path.exists():
-        resources_path.mkdir(parents=True)
+    content = process_resources(content, page_url, destination)
 
-    content = replace_resources(content, site_url, resources_path)
-
-    with file_path.open('w') as file:
-        file.write(content)
+    file_path = get_page_download_path(page_url, destination)
+    save_page(file_path, content)
 
     return str(file_path)

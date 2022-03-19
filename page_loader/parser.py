@@ -4,25 +4,38 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
+from page_loader.file_paths import get_resources_download_path
+from page_loader.file_saver import save_resource
 from page_loader.loader import load_url_content
-from page_loader.name_converter import convert_resource_name
+from page_loader.logger import get_logger
+from page_loader.name_converter import convert_resource_name, get_site_url
 
+ALLOWED_TAGS = ('img', 'link', 'script')
 TAGS_LINK_ATTRIBUTES = {
     'img': 'src',
     'link': 'href',
     'script': 'src',
 }
 
+logger = get_logger(__name__)
 
-def replace_resources(page_content: string, site_url: string, resources_folder: Path) -> string:
-    allowed_tags = ('img', 'link', 'script')
+
+def process_resources(page_content: string, page_url: string, destination: string) -> string:
+    resources_path = get_resources_download_path(page_url, destination)
+    if not resources_path.exists():
+        resources_path.mkdir(parents=True)
+        logger.info("resource output folder created - %s", str(resources_path))
+
+    site_url = get_site_url(page_url)
+
     parsed_domain = urlparse(site_url)
     soup = BeautifulSoup(page_content, 'html.parser')
-    for tag in soup.find_all(allowed_tags):
+    for tag in soup.find_all(ALLOWED_TAGS):
         tag_name = TAGS_LINK_ATTRIBUTES[tag.name]
         url = tag.get(tag_name)
         if not url:
             continue
+
         parsed_url = urlparse(url)
 
         full_url = ''
@@ -35,16 +48,15 @@ def replace_resources(page_content: string, site_url: string, resources_folder: 
         if not full_url:
             continue
 
-        resource_location = download_resource(full_url, resources_folder)
-        tag[tag_name] = resources_folder.name + '/' + resource_location
+        resource_location = download_and_save_resource(full_url, resources_path)
+        tag[tag_name] = resources_path.name + '/' + resource_location
 
     return soup.prettify()
 
 
-def download_resource(url: string, folder: Path) -> string:
+def download_and_save_resource(url: string, folder: Path) -> string:
     data = load_url_content(url)
     name = convert_resource_name(url)
     path = folder.joinpath(name)
-    with open(path, 'wb') as handler:
-        handler.write(data)
+    save_resource(path, data)
     return name

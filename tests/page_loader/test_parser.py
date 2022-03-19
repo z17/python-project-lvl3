@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import requests_mock
 
-from page_loader.parser import download_resource
+from page_loader.parser import download_and_save_resource
 from tests.file_loader import read_binary_file
 
 
@@ -21,7 +21,7 @@ def test_download_image(url, expected_path):
     with requests_mock.Mocker() as r_mock:
         r_mock.get(requests_mock.ANY, content=b'1')
         with tempfile.TemporaryDirectory() as out_dict:
-            actual_path = download_resource(url, Path(out_dict))
+            actual_path = download_and_save_resource(url, Path(out_dict))
             image_downloaded_path = Path(out_dict).joinpath(expected_path)
             actual_image = read_binary_file(image_downloaded_path.absolute())
 
