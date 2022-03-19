@@ -19,8 +19,11 @@ def load_url_content(url: str):
 
 def load(url: str):
     try:
-        return requests.get(url)
-    except requests.exceptions.ConnectionError:
+        result = requests.get(url)
+        if result.status_code != requests.codes.ALL_GOOD:
+            logger.error("Status code %s for %s", result.status_code, url)
+            raise RuntimeError("Status code %s for %s", result.status_code, url)
+        return result
+    except requests.exceptions.ConnectionError as q:
         logger.error("Connection error to %s", url)
         raise RuntimeError("Connection error to %s", url)
-

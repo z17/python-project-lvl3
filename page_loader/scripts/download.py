@@ -15,7 +15,7 @@ def main():
         print(download(args.url, args.destination))
     except RuntimeError:
         print("ERROR, see logs")
-        sys.exit(1)  # todo: google for error codes
+        sys.exit(1)
 
 
 if __name__ == '__main__':

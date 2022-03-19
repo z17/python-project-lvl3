@@ -16,4 +16,3 @@ def save_resource(file_path: Path, data):
     with open(file_path, 'wb') as handler:
         handler.write(data)
         logger.info("resource saved to %s", str(file_path))
-
