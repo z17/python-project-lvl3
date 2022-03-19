@@ -1,7 +1,7 @@
 import pytest
 import requests_mock
 
-from loader import load_url
+from page_loader.loader import load_url
 
 
 def test_loader_errors():

@@ -24,6 +24,6 @@ def load(url: str):
             logger.error("Status code %s for %s", result.status_code, url)
             raise RuntimeError("Status code %s for %s", result.status_code, url)
         return result
-    except requests.exceptions.ConnectionError as q:
+    except requests.exceptions.ConnectionError:
         logger.error("Connection error to %s", url)
         raise RuntimeError("Connection error to %s", url)
