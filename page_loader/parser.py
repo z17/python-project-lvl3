@@ -43,7 +43,8 @@ def process_resources(page_content: string, page_url: string, destination: strin
             full_url = '{site_url}{image_url}'.format(site_url=site_url, image_url=parsed_url.path)
 
         if parsed_url.netloc == parsed_domain.netloc:
-            full_url = '{url.scheme}://{url.netloc}{url.path}'.format(url=parsed_url)
+            url_schema = parsed_url.scheme if parsed_url.scheme else parsed_domain.scheme
+            full_url = '{url_schema}://{url.netloc}{url.path}'.format(url=parsed_url, url_schema=url_schema)
 
         if not full_url:
             continue

@@ -10,16 +10,19 @@ from page_loader.parser import process_resources
 logger = get_logger(__name__)
 
 
-def download(page_url: string, destination: string) -> string:
+def download(page_url: string, destination: string, progress_load, progress_resources, progress_save) -> string:
     if not Path(destination).exists():
         logger.error("destination folder %s doesn't exists", destination)
         raise RuntimeError("destination folder doesn't exists")
 
     content = load_url(page_url)
+    progress_load()
 
     content = process_resources(content, page_url, destination)
+    progress_resources(100)
 
     file_path = get_page_download_path(page_url, destination)
     save_page(file_path, content)
+    progress_save()
 
     return str(file_path)
