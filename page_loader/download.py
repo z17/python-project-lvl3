@@ -1,6 +1,7 @@
 import string
 from pathlib import Path
 
+from page_loader.Progress import Progress
 from page_loader.file_paths import get_page_download_path
 from page_loader.file_saver import save_page
 from page_loader.loader import load_url
@@ -17,7 +18,8 @@ def download(page_url: string, destination: string) -> string:
 
     content = load_url(page_url)
 
-    content = process_resources(content, page_url, destination)
+    progress = Progress()
+    content = process_resources(content, page_url, destination, progress)
 
     file_path = get_page_download_path(page_url, destination)
     save_page(file_path, content)

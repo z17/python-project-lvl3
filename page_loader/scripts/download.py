@@ -11,6 +11,7 @@ def main():
     parser.add_argument('destination')
 
     args = parser.parse_args()
+
     try:
         print(download(args.url, args.destination))
     except RuntimeError:

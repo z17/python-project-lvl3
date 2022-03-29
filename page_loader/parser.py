@@ -9,6 +9,7 @@ from page_loader.file_saver import save_resource
 from page_loader.loader import load_url_content
 from page_loader.logger import get_logger
 from page_loader.name_converter import convert_resource_name, get_site_url
+from page_loader.Progress import Progress
 
 ALLOWED_TAGS = ('img', 'link', 'script')
 TAGS_LINK_ATTRIBUTES = {
@@ -20,7 +21,7 @@ TAGS_LINK_ATTRIBUTES = {
 logger = get_logger(__name__)
 
 
-def process_resources(page_content: string, page_url: string, destination: string) -> string:
+def process_resources(page_content: string, page_url: string, destination: string, progress: Progress) -> string:
     resources_path = get_resources_download_path(page_url, destination)
     if not resources_path.exists():
         resources_path.mkdir(parents=True)
@@ -30,7 +31,10 @@ def process_resources(page_content: string, page_url: string, destination: strin
 
     parsed_domain = urlparse(site_url)
     soup = BeautifulSoup(page_content, 'html.parser')
-    for tag in soup.find_all(ALLOWED_TAGS):
+    tags = soup.find_all(ALLOWED_TAGS)
+    progress.processing_resources_start(len(tags))
+    for tag in tags:
+        progress.processing_resources_next()
         tag_name = TAGS_LINK_ATTRIBUTES[tag.name]
         url = tag.get(tag_name)
         if not url:
@@ -43,13 +47,16 @@ def process_resources(page_content: string, page_url: string, destination: strin
             full_url = '{site_url}{image_url}'.format(site_url=site_url, image_url=parsed_url.path)
 
         if parsed_url.netloc == parsed_domain.netloc:
-            full_url = '{url.scheme}://{url.netloc}{url.path}'.format(url=parsed_url)
+            url_schema = parsed_url.scheme if parsed_url.scheme else parsed_domain.scheme
+            full_url = '{url_schema}://{url.netloc}{url.path}'.format(url=parsed_url, url_schema=url_schema)
 
         if not full_url:
             continue
 
         resource_location = download_and_save_resource(full_url, resources_path)
         tag[tag_name] = resources_path.name + '/' + resource_location
+
+    progress.processing_resources_finish()
 
     return soup.prettify()
 
