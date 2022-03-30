@@ -19,6 +19,7 @@ def convert_name(url: string) -> string:
 def convert_resource_name(url: string) -> string:
     name, parsed_url = convert_base(url)
     extension = os.path.splitext(parsed_url.path)[1]
+    extension = extension if extension else '.html'
 
     return name + extension
 

@@ -27,6 +27,10 @@ def test_convert_name(url, expected_name):
          'ru-hexlet-io-assets-application.css'),
         ('https://ru.hexlet.io/assets_application.js',
          'ru-hexlet-io-assets_application.js'),
+        ('http://example.com/test/page',
+         'example-com-test-page.html'),
+        ('http://example.com/test/page.htm',
+         'example-com-test-page.htm'),
     ],
 )
 def test_convert_resource_name(url, expected_name):
