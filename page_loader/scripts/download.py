@@ -13,7 +13,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        print(download(args.url, args.destination))
+        print(download(args.url, args.output))
     except RuntimeError:
         print("ERROR, see logs")
         sys.exit(1)
