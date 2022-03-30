@@ -1,10 +1,8 @@
 import logging
 
-from pathlib import Path
 import logging.config
 
-conf_path = Path('logger.conf').absolute()
-logging.config.fileConfig(fname=conf_path)
+logging.basicConfig(level=logging.INFO)
 
 
 def get_logger(name: str = None) -> logging.Logger:
