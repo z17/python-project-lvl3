@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 import logging.config
 
-conf_path = Path(__file__).parent.parent.joinpath('logger.conf').absolute()
+conf_path = Path('logger.conf').absolute()
 logging.config.fileConfig(fname=conf_path)
 
 
