@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from logger import set_basic_config
+from page_loader.logger import set_basic_config
 from page_loader.download import download
 
 
