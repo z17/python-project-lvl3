@@ -11,7 +11,7 @@ from page_loader.parser import process_resources
 logger = get_logger(__name__)
 
 
-def download(page_url: string, destination: string) -> string:
+def download(page_url: string, destination: string = '') -> string:
     if not Path(destination).exists():
         logger.error("destination folder %s doesn't exists", destination)
         raise RuntimeError("destination folder doesn't exists")

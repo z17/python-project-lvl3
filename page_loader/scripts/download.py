@@ -1,10 +1,13 @@
 import argparse
 import sys
 
+from logger import set_basic_config
 from page_loader.download import download
 
 
 def main():
+    set_basic_config()
+
     parser = argparse.ArgumentParser(description='Page downloader')
 
     parser.add_argument('url')

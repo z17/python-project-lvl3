@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import requests_mock
 
-from page_loader.parser import download_and_save_resource
+from page_loader.parser import download_and_save_resource, get_site_url
 from tests.file_loader import read_binary_file
 
 
@@ -28,3 +28,11 @@ def test_download_image(url, expected_path):
             assert actual_path == expected_path
             assert image_downloaded_path.exists()
             assert expected_image_content == actual_image
+
+
+def test_get_site_url():
+    assert get_site_url('http://example.com') == 'http://example.com'
+    assert get_site_url('http://example.com/') == 'http://example.com'
+    assert get_site_url('https://example.com/') == 'https://example.com'
+    assert get_site_url('https://example.com?dsfds=5') == 'https://example.com'
+    assert get_site_url('http://example.com/sdgdfgdfg') == 'http://example.com'

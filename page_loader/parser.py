@@ -1,6 +1,6 @@
 import string
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin, urlunparse
 
 from bs4 import BeautifulSoup
 
@@ -8,10 +8,9 @@ from page_loader.file_paths import get_resources_download_path
 from page_loader.file_saver import save_resource
 from page_loader.loader import load_url_content
 from page_loader.logger import get_logger
-from page_loader.name_converter import convert_resource_name, get_site_url
+from page_loader.name_converter import convert_resource_name
 from page_loader.Progress import Progress
 
-ALLOWED_TAGS = ('img', 'link', 'script')
 TAGS_LINK_ATTRIBUTES = {
     'img': 'src',
     'link': 'href',
@@ -31,7 +30,7 @@ def process_resources(page_content: string, page_url: string, destination: strin
 
     parsed_domain = urlparse(site_url)
     soup = BeautifulSoup(page_content, 'html.parser')
-    tags = soup.find_all(ALLOWED_TAGS)
+    tags = soup.find_all(TAGS_LINK_ATTRIBUTES.keys())
     progress.processing_resources_start(len(tags))
     for tag in tags:
         progress.processing_resources_next()
@@ -44,11 +43,11 @@ def process_resources(page_content: string, page_url: string, destination: strin
 
         full_url = ''
         if not parsed_url.netloc:
-            full_url = '{site_url}{image_url}'.format(site_url=site_url, image_url=parsed_url.path)
+            full_url = urljoin(site_url, parsed_url.path)
 
         if parsed_url.netloc == parsed_domain.netloc:
             url_schema = parsed_url.scheme if parsed_url.scheme else parsed_domain.scheme
-            full_url = '{url_schema}://{url.netloc}{url.path}'.format(url=parsed_url, url_schema=url_schema)
+            full_url = urlunparse((url_schema, parsed_url.netloc, parsed_url.path, "", "", ""))
 
         if not full_url:
             continue
@@ -67,3 +66,9 @@ def download_and_save_resource(url: string, folder: Path) -> string:
     path = folder.joinpath(name)
     save_resource(path, data)
     return name
+
+
+def get_site_url(full_url: string) -> string:
+    parsed_url = urlparse(full_url)
+
+    return '{url.scheme}://{url.netloc}'.format(url=parsed_url)

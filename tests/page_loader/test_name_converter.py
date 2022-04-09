@@ -1,6 +1,6 @@
 import pytest
 
-from page_loader.name_converter import convert_name, get_site_url, convert_resource_name
+from page_loader.name_converter import convert_name, convert_resource_name
 
 
 # noinspection HttpUrlsUsage
@@ -37,10 +37,3 @@ def test_convert_resource_name(url, expected_name):
     actual_name = convert_resource_name(url)
     assert actual_name == expected_name
 
-
-def test_get_site_url():
-    assert get_site_url('http://example.com') == 'http://example.com'
-    assert get_site_url('http://example.com/') == 'http://example.com'
-    assert get_site_url('https://example.com/') == 'https://example.com'
-    assert get_site_url('https://example.com?dsfds=5') == 'https://example.com'
-    assert get_site_url('http://example.com/sdgdfgdfg') == 'http://example.com'
