@@ -36,4 +36,3 @@ def test_convert_name(url, expected_name):
 def test_convert_resource_name(url, expected_name):
     actual_name = convert_resource_name(url)
     assert actual_name == expected_name
-
