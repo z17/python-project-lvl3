@@ -70,5 +70,4 @@ def download_and_save_resource(url: string, folder: Path) -> string:
 
 def get_site_url(full_url: string) -> string:
     parsed_url = urlparse(full_url)
-
-    return '{url.scheme}://{url.netloc}'.format(url=parsed_url)
+    return urlunparse((parsed_url.scheme, parsed_url.netloc, "", "", "", ""))
